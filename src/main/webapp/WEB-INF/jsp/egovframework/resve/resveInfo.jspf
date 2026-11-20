@@ -1,3 +1,7 @@
+<%-- 정적 include 조각. 태그 선언은 IDE 검사용 (포함하는 페이지와 같은 URI라 중복 허용) --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <dl class="info">
 	<dt>예약번호</dt><dd>${resve.resveSn}</dd>
 	<dt>시설</dt><dd><c:out value="${resve.fcltyNm}" /></dd>

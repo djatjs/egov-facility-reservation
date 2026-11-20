@@ -7,3 +7,4 @@ target/
 .idea/
 # DB 접속 정보
 src/main/resources/egovframework/props/db.properties
+.metadata/

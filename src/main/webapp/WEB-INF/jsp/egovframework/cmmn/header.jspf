@@ -1,3 +1,5 @@
+<%-- 정적 include 조각. 태그 선언은 IDE 검사용 (포함하는 페이지와 같은 URI라 중복 허용) --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
