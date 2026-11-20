@@ -1,0 +1,27 @@
+<dl class="info">
+	<dt>예약번호</dt><dd>${resve.resveSn}</dd>
+	<dt>시설</dt><dd><c:out value="${resve.fcltyNm}" /></dd>
+	<dt>신청자</dt><dd><c:out value="${resve.mberNm}" /> (<c:out value="${resve.mberId}" />)</dd>
+	<dt>이용일시</dt><dd>${fn:substring(resve.resveDe,0,4)}-${fn:substring(resve.resveDe,4,6)}-${fn:substring(resve.resveDe,6,8)}
+		${fn:substring(resve.beginTm,0,2)}:${fn:substring(resve.beginTm,2,4)}~${fn:substring(resve.endTm,0,2)}:${fn:substring(resve.endTm,2,4)}</dd>
+	<dt>이용 인원</dt><dd>${resve.useNmpr}명</dd>
+	<dt>사용 목적</dt><dd><c:out value="${resve.usePurps}" /></dd>
+	<dt>상태</dt><dd><span class="badge s${resve.resveSttusCd}"><c:out value="${resve.resveSttusNm}" /></span></dd>
+	<c:if test="${not empty resve.returnRsn}"><dt>반려 사유</dt><dd class="pre"><c:out value="${resve.returnRsn}" /></dd></c:if>
+</dl>
+
+<h2>처리 이력</h2>
+<table class="list">
+	<caption class="sr-only">예약 상태 변경 이력</caption>
+	<thead><tr><th scope="col">일시</th><th scope="col">변경</th><th scope="col">처리자</th><th scope="col">사유</th></tr></thead>
+	<tbody>
+	<c:forEach var="h" items="${histList}">
+		<tr>
+			<td><fmt:formatDate value="${h.changeDt}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+			<td><c:out value="${empty h.bfrSttusNm ? '-' : h.bfrSttusNm}" /> → <c:out value="${h.aftSttusNm}" /></td>
+			<td><c:out value="${h.changerId}" /></td>
+			<td class="left pre"><c:out value="${h.changeRsn}" /></td>
+		</tr>
+	</c:forEach>
+	</tbody>
+</table>

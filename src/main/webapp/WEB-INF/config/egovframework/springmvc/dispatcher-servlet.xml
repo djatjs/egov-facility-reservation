@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+				http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<context:component-scan base-package="egovframework">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+	</context:component-scan>
+
+	<mvc:annotation-driven />
+
+	<mvc:interceptors>
+		<!-- 모든 요청: CSRF 토큰 발급, POST는 토큰 검증 -->
+		<bean class="egovframework.cmm.web.CsrfInterceptor" />
+		<!-- 로그인·관리자 권한 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/resve/**" />
+			<mvc:mapping path="/admin/**" />
+			<bean class="egovframework.cmm.web.AuthInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 업무 예외는 메시지만 보여 주고 이전 화면으로, 그 외는 공통 오류 화면 (스택 트레이스 비노출) -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView" value="cmmn/egovError" />
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.egovframe.rte.fdl.cmmn.exception.EgovBizException">cmmn/bizError</prop>
+				<prop key="org.springframework.web.bind.ServletRequestBindingException">cmmn/egovError</prop>
+				<prop key="org.springframework.dao.DataAccessException">cmmn/dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">cmmn/transactionFailure</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1"
+		p:viewClass="org.springframework.web.servlet.view.JstlView"
+		p:prefix="/WEB-INF/jsp/egovframework/" p:suffix=".jsp" />
+
+	<!-- 표준프레임워크 페이징 태그 -->
+	<bean id="imageRenderer" class="egovframework.cmm.web.EgovImgPaginationRenderer" />
+	<bean id="paginationManager" class="org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
+		<property name="rendererType">
+			<map>
+				<entry key="image" value-ref="imageRenderer" />
+			</map>
+		</property>
+	</bean>
+
+</beans>

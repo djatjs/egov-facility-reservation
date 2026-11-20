@@ -1,26 +1,18 @@
-<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" isErrorPage="true"%>
+<%-- 원인과 스택 트레이스는 서버 로그에만 남기고 화면에는 노출하지 않는다 --%>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="<c:url value='/css/egovframework/sample.css'/>" />
-<title>Basic Sample</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오류 | 공공시설 예약</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/fclty.css">
 </head>
-
 <body>
-    <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            <td width="100%" height="100%" align="center" valign="middle" style="padding-top: 150px;"><table border="0" cellspacing="0" cellpadding="0">
-                    <tr>
-                        <td class="<spring:message code='image.errorBg' />">
-                            <span style="font-family: Tahoma; font-weight: bold; color: #000000; line-height: 150%; width: 440px; height: 70px;"></span>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<main class="wrap">
+	<h1>요청을 처리할 수 없습니다</h1>
+	<p class="msg error">페이지가 없거나 접근 권한이 없습니다. 문제가 계속되면 관리자에게 문의하세요.</p>
+	<p><a class="btn" href="${pageContext.request.contextPath}/main.do">처음으로</a></p>
+</main>
 </body>
 </html>

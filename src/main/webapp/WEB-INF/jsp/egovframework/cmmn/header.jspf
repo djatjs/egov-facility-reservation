@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><c:out value="${pageTitle}" /> | 공공시설 예약</title>
+<link rel="stylesheet" href="${ctx}/css/fclty.css">
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="top">
+	<div class="wrap">
+		<a class="brand" href="${ctx}/main.do">공공시설 예약</a>
+		<nav aria-label="주 메뉴">
+			<a href="${ctx}/fclty/list.do">시설 찾기</a>
+			<a href="${ctx}/notice/list.do">공지사항</a>
+			<c:if test="${not empty login}"><a href="${ctx}/resve/myList.do">나의 예약</a></c:if>
+			<c:if test="${login.admin}">
+				<a href="${ctx}/admin/resve/list.do" class="admin">예약 관리</a>
+				<a href="${ctx}/admin/fclty/list.do" class="admin">시설 관리</a>
+			</c:if>
+		</nav>
+		<div class="user">
+			<c:choose>
+				<c:when test="${empty login}">
+					<a href="${ctx}/mber/loginView.do">로그인</a>
+					<a href="${ctx}/mber/joinView.do">회원가입</a>
+				</c:when>
+				<c:otherwise>
+					<span><c:out value="${login.mberNm}" />님</span>
+					<form method="post" action="${ctx}/mber/logout.do" class="inline">
+						<input type="hidden" name="_csrf" value="<c:out value='${sessionScope.CSRF_TOKEN}'/>">
+						<button type="submit" class="link">로그아웃</button>
+					</form>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</div>
+</header>
+<main id="content" class="wrap">
+<h1><c:out value="${pageTitle}" /></h1>
+<c:if test="${not empty message}"><p class="msg" role="status"><c:out value="${message}" /></p></c:if>
