@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.fclty.service.impl.FcltyMapper">
+
+	<sql id="columns">
+		F.FCLTY_SN, F.FCLTY_TY_CD, C.CODE_NM AS FCLTY_TY_NM, F.FCLTY_NM, F.ADRES, F.ACMD_NMPR,
+		F.OPER_BEGIN_TM, F.OPER_END_TM, F.RESVE_UNIT_MIN, F.FCLTY_DC, F.USE_YN,
+		F.REGISTER_ID, F.REGIST_DT, F.UPDUSR_ID, F.UPDT_DT
+	</sql>
+
+	<sql id="fromJoin">
+		FROM TB_FCLTY F
+		LEFT JOIN TB_CMMN_CODE C ON C.CODE_ID = 'FCLTY_TY' AND C.CODE = F.FCLTY_TY_CD
+	</sql>
+
+	<sql id="searchWhere">
+		<where>
+			<if test="useYn != null and useYn != ''">AND F.USE_YN = #{useYn}</if>
+			<if test="fcltyTyCd != null and fcltyTyCd != ''">AND F.FCLTY_TY_CD = #{fcltyTyCd}</if>
+			<if test="searchKeyword != null and searchKeyword != ''">AND F.FCLTY_NM LIKE '%' || #{searchKeyword} || '%'</if>
+		</where>
+	</sql>
+
+	<select id="selectFcltyList" parameterType="egovframework.fclty.service.FcltySearchVO" resultType="egovframework.fclty.service.FcltyVO">
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingPrefix" />
+		SELECT <include refid="columns" />
+		<include refid="fromJoin" />
+		<include refid="searchWhere" />
+		ORDER BY F.FCLTY_SN DESC
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingSuffix" />
+	</select>
+
+	<select id="selectFcltyListTotCnt" parameterType="egovframework.fclty.service.FcltySearchVO" resultType="int">
+		SELECT COUNT(*)
+		<include refid="fromJoin" />
+		<include refid="searchWhere" />
+	</select>
+
+	<select id="selectFclty" parameterType="long" resultType="egovframework.fclty.service.FcltyVO">
+		SELECT <include refid="columns" />
+		<include refid="fromJoin" />
+		WHERE F.FCLTY_SN = #{fcltySn}
+	</select>
+
+	<insert id="insertFclty" parameterType="egovframework.fclty.service.FcltyVO">
+		INSERT INTO TB_FCLTY (FCLTY_SN, FCLTY_TY_CD, FCLTY_NM, ADRES, ACMD_NMPR, OPER_BEGIN_TM, OPER_END_TM,
+		                      RESVE_UNIT_MIN, FCLTY_DC, USE_YN, REGISTER_ID, REGIST_DT)
+		VALUES (#{fcltySn}, #{fcltyTyCd}, #{fcltyNm}, #{adres}, #{acmdNmpr}, #{operBeginTm}, #{operEndTm},
+		        #{resveUnitMin}, #{fcltyDc}, #{useYn}, #{registerId}, SYSDATE)
+	</insert>
+
+	<update id="updateFclty" parameterType="egovframework.fclty.service.FcltyVO">
+		UPDATE TB_FCLTY
+		   SET FCLTY_TY_CD = #{fcltyTyCd}, FCLTY_NM = #{fcltyNm}, ADRES = #{adres}, ACMD_NMPR = #{acmdNmpr},
+		       OPER_BEGIN_TM = #{operBeginTm}, OPER_END_TM = #{operEndTm}, RESVE_UNIT_MIN = #{resveUnitMin},
+		       FCLTY_DC = #{fcltyDc}, USE_YN = #{useYn}, UPDUSR_ID = #{updusrId}, UPDT_DT = SYSDATE
+		 WHERE FCLTY_SN = #{fcltySn}
+	</update>
+
+</mapper>

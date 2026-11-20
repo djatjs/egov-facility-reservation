@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.notice.service.impl.NoticeMapper">
+
+	<sql id="searchWhere">
+		WHERE USE_YN = 'Y'
+		<if test="searchKeyword != null and searchKeyword != ''">AND NTT_SJ LIKE '%' || #{searchKeyword} || '%'</if>
+	</sql>
+
+	<select id="selectNoticeList" parameterType="egovframework.cmm.DefaultSearchVO" resultType="egovframework.notice.service.NoticeVO">
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingPrefix" />
+		SELECT NTT_SN, NTT_SJ, RDCNT, REGISTER_ID, REGIST_DT
+		  FROM TB_NOTICE
+		<include refid="searchWhere" />
+		 ORDER BY NTT_SN DESC
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingSuffix" />
+	</select>
+
+	<select id="selectNoticeListTotCnt" parameterType="egovframework.cmm.DefaultSearchVO" resultType="int">
+		SELECT COUNT(*) FROM TB_NOTICE
+		<include refid="searchWhere" />
+	</select>
+
+	<select id="selectNotice" parameterType="long" resultType="egovframework.notice.service.NoticeVO">
+		SELECT NTT_SN, NTT_SJ, NTT_CN, RDCNT, REGISTER_ID, REGIST_DT, UPDUSR_ID, UPDT_DT
+		  FROM TB_NOTICE
+		 WHERE NTT_SN = #{nttSn}
+		   AND USE_YN = 'Y'
+	</select>
+
+	<update id="updateRdcnt" parameterType="long">
+		UPDATE TB_NOTICE SET RDCNT = RDCNT + 1 WHERE NTT_SN = #{nttSn}
+	</update>
+
+	<insert id="insertNotice" parameterType="egovframework.notice.service.NoticeVO">
+		INSERT INTO TB_NOTICE (NTT_SN, NTT_SJ, NTT_CN, RDCNT, USE_YN, REGISTER_ID, REGIST_DT)
+		VALUES (#{nttSn}, #{nttSj}, #{nttCn}, 0, 'Y', #{registerId}, SYSDATE)
+	</insert>
+
+	<update id="updateNotice" parameterType="egovframework.notice.service.NoticeVO">
+		UPDATE TB_NOTICE
+		   SET NTT_SJ = #{nttSj}, NTT_CN = #{nttCn}, UPDUSR_ID = #{updusrId}, UPDT_DT = SYSDATE
+		 WHERE NTT_SN = #{nttSn}
+		   AND USE_YN = 'Y'
+	</update>
+
+	<update id="deleteNotice">
+		UPDATE TB_NOTICE
+		   SET USE_YN = 'N', UPDUSR_ID = #{updusrId}, UPDT_DT = SYSDATE
+		 WHERE NTT_SN = #{nttSn}
+		   AND USE_YN = 'Y'
+	</update>
+
+</mapper>

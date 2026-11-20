@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.resve.service.impl.ResveMapper">
+
+	<!-- ===== 신청 시 잠금과 검사 ===== -->
+
+	<select id="lockMber" parameterType="string" resultType="string">
+		SELECT MBER_ID FROM TB_MBER WHERE MBER_ID = #{mberId} FOR UPDATE
+	</select>
+
+	<select id="lockFclty" parameterType="long" resultType="egovframework.fclty.service.FcltyVO">
+		SELECT FCLTY_SN, ACMD_NMPR, OPER_BEGIN_TM, OPER_END_TM, RESVE_UNIT_MIN
+		  FROM TB_FCLTY
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND USE_YN = 'Y'
+		   FOR UPDATE
+	</select>
+
+	<!-- 겹침 조건: 새 시작 < 기존 종료 AND 새 종료 > 기존 시작 (HH24MI 4자리 문자열은 문자열 비교로 시간 순서가 맞다) -->
+	<select id="countOverlap" parameterType="egovframework.resve.service.ResveVO" resultType="int">
+		SELECT COUNT(*)
+		  FROM TB_RESVE
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND RESVE_DE = #{resveDe}
+		   AND RESVE_STTUS_CD IN ('01', '02')
+		   AND #{beginTm} &lt; END_TM
+		   AND #{endTm} &gt; BEGIN_TM
+	</select>
+
+	<select id="selectMberDailyMinutes" resultType="int">
+		SELECT NVL(SUM( (TO_NUMBER(SUBSTR(END_TM, 1, 2)) * 60 + TO_NUMBER(SUBSTR(END_TM, 3, 2)))
+		              - (TO_NUMBER(SUBSTR(BEGIN_TM, 1, 2)) * 60 + TO_NUMBER(SUBSTR(BEGIN_TM, 3, 2))) ), 0)
+		  FROM TB_RESVE
+		 WHERE MBER_ID = #{mberId}
+		   AND RESVE_DE = #{resveDe}
+		   AND RESVE_STTUS_CD IN ('01', '02')
+	</select>
+
+	<insert id="insertResve" parameterType="egovframework.resve.service.ResveVO">
+		INSERT INTO TB_RESVE (RESVE_SN, FCLTY_SN, MBER_ID, RESVE_DE, BEGIN_TM, END_TM, USE_NMPR, USE_PURPS,
+		                      RESVE_STTUS_CD, REGIST_DT)
+		VALUES (#{resveSn}, #{fcltySn}, #{mberId}, #{resveDe}, #{beginTm}, #{endTm}, #{useNmpr}, #{usePurps},
+		        #{resveSttusCd}, SYSDATE)
+	</insert>
+
+	<insert id="insertResveHist" parameterType="egovframework.resve.service.ResveHistVO">
+		INSERT INTO TB_RESVE_HIST (HIST_SN, RESVE_SN, BFR_STTUS_CD, AFT_STTUS_CD, CHANGE_RSN, CHANGER_ID, CHANGE_DT)
+		VALUES (SEQ_RESVE_HIST.NEXTVAL, #{resveSn}, #{bfrSttusCd}, #{aftSttusCd}, #{changeRsn}, #{changerId}, SYSDATE)
+	</insert>
+
+	<update id="updateResveSttus">
+		UPDATE TB_RESVE
+		   SET RESVE_STTUS_CD = #{aftSttusCd},
+		       RETURN_RSN = NVL(#{returnRsn}, RETURN_RSN),
+		       UPDUSR_ID = #{updusrId},
+		       UPDT_DT = SYSDATE
+		 WHERE RESVE_SN = #{resveSn}
+		   AND RESVE_STTUS_CD = #{bfrSttusCd}
+	</update>
+
+	<!-- ===== 조회 ===== -->
+
+	<sql id="columns">
+		R.RESVE_SN, R.FCLTY_SN, F.FCLTY_NM, R.MBER_ID, M.MBER_NM, R.RESVE_DE, R.BEGIN_TM, R.END_TM,
+		R.USE_NMPR, R.USE_PURPS, R.RESVE_STTUS_CD, C.CODE_NM AS RESVE_STTUS_NM, R.RETURN_RSN,
+		R.REGIST_DT, R.UPDUSR_ID, R.UPDT_DT
+	</sql>
+
+	<sql id="fromJoin">
+		FROM TB_RESVE R
+		JOIN TB_FCLTY F ON F.FCLTY_SN = R.FCLTY_SN
+		JOIN TB_MBER M ON M.MBER_ID = R.MBER_ID
+		LEFT JOIN TB_CMMN_CODE C ON C.CODE_ID = 'RESVE_STTUS' AND C.CODE = R.RESVE_STTUS_CD
+	</sql>
+
+	<sql id="searchWhere">
+		<where>
+			<if test="mberId != null and mberId != ''">AND R.MBER_ID = #{mberId}</if>
+			<if test="fcltySn != null">AND R.FCLTY_SN = #{fcltySn}</if>
+			<if test="resveSttusCd != null and resveSttusCd != ''">AND R.RESVE_STTUS_CD = #{resveSttusCd}</if>
+			<if test="beginDe != null and beginDe != ''">AND R.RESVE_DE &gt;= #{beginDe}</if>
+			<if test="endDe != null and endDe != ''">AND R.RESVE_DE &lt;= #{endDe}</if>
+			<if test="searchKeyword != null and searchKeyword != ''">AND (M.MBER_NM LIKE '%' || #{searchKeyword} || '%' OR R.MBER_ID = #{searchKeyword})</if>
+		</where>
+	</sql>
+
+	<select id="selectResve" parameterType="long" resultType="egovframework.resve.service.ResveVO">
+		SELECT <include refid="columns" />
+		<include refid="fromJoin" />
+		WHERE R.RESVE_SN = #{resveSn}
+	</select>
+
+	<select id="selectResveList" parameterType="egovframework.resve.service.ResveSearchVO" resultType="egovframework.resve.service.ResveVO">
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingPrefix" />
+		SELECT <include refid="columns" />
+		<include refid="fromJoin" />
+		<include refid="searchWhere" />
+		ORDER BY R.RESVE_SN DESC
+		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingSuffix" />
+	</select>
+
+	<select id="selectResveListTotCnt" parameterType="egovframework.resve.service.ResveSearchVO" resultType="int">
+		SELECT COUNT(*)
+		<include refid="fromJoin" />
+		<include refid="searchWhere" />
+	</select>
+
+	<select id="selectDayResveList" resultType="egovframework.resve.service.ResveVO">
+		SELECT RESVE_SN, BEGIN_TM, END_TM, RESVE_STTUS_CD
+		  FROM TB_RESVE
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND RESVE_DE = #{resveDe}
+		   AND RESVE_STTUS_CD IN ('01', '02')
+		 ORDER BY BEGIN_TM
+	</select>
+
+	<select id="selectResveHistList" parameterType="long" resultType="egovframework.resve.service.ResveHistVO">
+		SELECT H.HIST_SN, H.RESVE_SN, H.BFR_STTUS_CD, B.CODE_NM AS BFR_STTUS_NM, H.AFT_STTUS_CD, A.CODE_NM AS AFT_STTUS_NM,
+		       H.CHANGE_RSN, H.CHANGER_ID, H.CHANGE_DT
+		  FROM TB_RESVE_HIST H
+		  LEFT JOIN TB_CMMN_CODE B ON B.CODE_ID = 'RESVE_STTUS' AND B.CODE = H.BFR_STTUS_CD
+		  LEFT JOIN TB_CMMN_CODE A ON A.CODE_ID = 'RESVE_STTUS' AND A.CODE = H.AFT_STTUS_CD
+		 WHERE H.RESVE_SN = #{resveSn}
+		 ORDER BY H.HIST_SN
+	</select>
+
+</mapper>

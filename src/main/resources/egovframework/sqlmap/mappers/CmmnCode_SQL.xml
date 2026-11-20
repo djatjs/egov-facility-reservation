@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.cmm.service.impl.CmmnCodeMapper">
+
+	<select id="selectCodeList" parameterType="string" resultType="egovframework.cmm.service.CmmnCodeVO">
+		SELECT CODE_ID, CODE, CODE_NM
+		  FROM TB_CMMN_CODE
+		 WHERE CODE_ID = #{codeId}
+		   AND USE_YN = 'Y'
+		 ORDER BY SORT_ORDR
+	</select>
+
+	<!-- Oracle 11g 호환 ROWNUM 페이징 (다른 매퍼에서 include) -->
+	<sql id="pagingPrefix">
+		SELECT * FROM ( SELECT ROWNUM RN, P.* FROM (
+	</sql>
+	<sql id="pagingSuffix">
+		) P WHERE ROWNUM &lt;= #{lastIndex} ) WHERE RN &gt; #{firstIndex}
+	</sql>
+
+</mapper>
