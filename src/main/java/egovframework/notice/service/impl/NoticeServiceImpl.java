@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.springframework.stereotype.Service;
 
 import egovframework.cmm.DefaultSearchVO;
@@ -17,9 +16,6 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 
 	@Resource(name = "noticeMapper")
 	private NoticeMapper noticeMapper;
-
-	@Resource(name = "noticeIdGnrService")
-	private EgovIdGnrService noticeIdGnrService;
 
 	@Override
 	public List<NoticeVO> selectNoticeList(DefaultSearchVO searchVO) throws Exception {
@@ -46,10 +42,8 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 	@Override
 	public long insertNotice(NoticeVO vo) throws Exception {
 		validate(vo);
-		long sn = noticeIdGnrService.getNextLongId();
-		vo.setNttSn(sn);
 		noticeMapper.insertNotice(vo);
-		return sn;
+		return vo.getNttSn();
 	}
 
 	@Override

@@ -33,6 +33,7 @@
 	</update>
 
 	<insert id="insertNotice" parameterType="egovframework.notice.service.NoticeVO">
+		<selectKey keyProperty="nttSn" resultType="long" order="BEFORE">SELECT SEQ_NOTICE.NEXTVAL FROM DUAL</selectKey>
 		INSERT INTO TB_NOTICE (NTT_SN, NTT_SJ, NTT_CN, RDCNT, USE_YN, REGISTER_ID, REGIST_DT)
 		VALUES (#{nttSn}, #{nttSj}, #{nttCn}, 0, 'Y', #{registerId}, SYSDATE)
 	</insert>

@@ -14,6 +14,8 @@
 		<property name="password" value="${db.password}" />
 		<property name="maxTotal" value="20" />
 		<property name="maxIdle" value="20" />
+		<!-- 커넥션을 못 받으면 무한 대기하지 않고 5초 뒤 실패 (풀 교착을 숨기지 않는다) -->
+		<property name="maxWaitMillis" value="5000" />
 		<property name="validationQuery" value="SELECT 1 FROM DUAL" />
 	</bean>
 

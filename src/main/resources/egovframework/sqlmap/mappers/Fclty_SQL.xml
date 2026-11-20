@@ -43,6 +43,7 @@
 	</select>
 
 	<insert id="insertFclty" parameterType="egovframework.fclty.service.FcltyVO">
+		<selectKey keyProperty="fcltySn" resultType="long" order="BEFORE">SELECT SEQ_FCLTY.NEXTVAL FROM DUAL</selectKey>
 		INSERT INTO TB_FCLTY (FCLTY_SN, FCLTY_TY_CD, FCLTY_NM, ADRES, ACMD_NMPR, OPER_BEGIN_TM, OPER_END_TM,
 		                      RESVE_UNIT_MIN, FCLTY_DC, USE_YN, REGISTER_ID, REGIST_DT)
 		VALUES (#{fcltySn}, #{fcltyTyCd}, #{fcltyNm}, #{adres}, #{acmdNmpr}, #{operBeginTm}, #{operEndTm},

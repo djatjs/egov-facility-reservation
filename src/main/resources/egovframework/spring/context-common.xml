@@ -13,7 +13,6 @@
 			<list>
 				<value>classpath:/egovframework/message/message-common</value>
 				<value>classpath:/egovframework/message/message-fclty</value>
-				<value>classpath:/org/egovframe/rte/fdl/idgnr/messages/idgnr</value>
 				<value>classpath:/org/egovframe/rte/fdl/property/messages/properties</value>
 			</list>
 		</property>

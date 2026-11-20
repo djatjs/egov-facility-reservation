@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.springframework.stereotype.Service;
 
 import egovframework.cmm.TimeUtil;
@@ -19,9 +18,6 @@ public class FcltyServiceImpl extends EgovAbstractServiceImpl implements FcltySe
 
 	@Resource(name = "fcltyMapper")
 	private FcltyMapper fcltyMapper;
-
-	@Resource(name = "fcltyIdGnrService")
-	private EgovIdGnrService fcltyIdGnrService;
 
 	@Resource(name = "cmmnCodeService")
 	private CmmnCodeService cmmnCodeService;
@@ -48,11 +44,9 @@ public class FcltyServiceImpl extends EgovAbstractServiceImpl implements FcltySe
 	@Override
 	public long insertFclty(FcltyVO vo) throws Exception {
 		validate(vo);
-		long sn = fcltyIdGnrService.getNextLongId();
-		vo.setFcltySn(sn);
 		vo.setUseYn("Y");
 		fcltyMapper.insertFclty(vo);
-		return sn;
+		return vo.getFcltySn();
 	}
 
 	@Override

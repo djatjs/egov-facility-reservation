@@ -36,7 +36,9 @@
 		   AND RESVE_STTUS_CD IN ('01', '02')
 	</select>
 
+	<!-- 예약번호는 같은 커넥션에서 시퀀스로 채번한다 (별도 커넥션을 쓰면 풀이 찼을 때 락 보유자가 멈춘다) -->
 	<insert id="insertResve" parameterType="egovframework.resve.service.ResveVO">
+		<selectKey keyProperty="resveSn" resultType="long" order="BEFORE">SELECT SEQ_RESVE.NEXTVAL FROM DUAL</selectKey>
 		INSERT INTO TB_RESVE (RESVE_SN, FCLTY_SN, MBER_ID, RESVE_DE, BEGIN_TM, END_TM, USE_NMPR, USE_PURPS,
 		                      RESVE_STTUS_CD, REGIST_DT)
 		VALUES (#{resveSn}, #{fcltySn}, #{mberId}, #{resveDe}, #{beginTm}, #{endTm}, #{useNmpr}, #{usePurps},

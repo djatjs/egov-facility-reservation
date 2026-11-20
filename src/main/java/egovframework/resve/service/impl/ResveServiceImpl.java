@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +26,6 @@ public class ResveServiceImpl extends EgovAbstractServiceImpl implements ResveSe
 
 	@Resource(name = "resveMapper")
 	private ResveMapper resveMapper;
-
-	@Resource(name = "resveIdGnrService")
-	private EgovIdGnrService resveIdGnrService;
 
 	@Resource(name = "propertiesService")
 	private EgovPropertyService propertiesService;
@@ -94,11 +90,10 @@ public class ResveServiceImpl extends EgovAbstractServiceImpl implements ResveSe
 					new String[] { String.valueOf(limit), String.valueOf(Math.max(limit - used, 0)) });
 		}
 
-		long sn = resveIdGnrService.getNextLongId();
-		vo.setResveSn(sn);
 		vo.setUsePurps(vo.getUsePurps().trim());
 		vo.setResveSttusCd(ResveSttus.APPLY);
-		resveMapper.insertResve(vo);
+		resveMapper.insertResve(vo); // selectKey가 resveSn을 채운다
+		long sn = vo.getResveSn();
 		insertHist(sn, null, ResveSttus.APPLY, null, vo.getMberId());
 		return sn;
 	}
