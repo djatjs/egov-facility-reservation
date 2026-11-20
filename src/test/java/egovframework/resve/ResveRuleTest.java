@@ -109,7 +109,8 @@ class ResveRuleTest extends ResveTestSupport {
 
 		long s1 = resveService.insertResve(req(f, a, "1000", "1100"));
 		assertEquals(pendingBefore + 1, resveService.selectDashboard().getPendingCnt());
-		assertEquals(true, resveService.selectPendingResveList(100).stream().anyMatch(r -> r.getResveSn() == s1));
+		// 오래된 신청 순이므로 기존 대기 건수만큼 뒤에 있다: 전체를 받아 포함 여부만 본다
+		assertEquals(true, resveService.selectPendingResveList(pendingBefore + 1).stream().anyMatch(r -> r.getResveSn() == s1));
 
 		resveService.approveResve(s1, login("admin", true));
 		assertEquals(pendingBefore, resveService.selectDashboard().getPendingCnt());

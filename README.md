@@ -213,7 +213,9 @@ DDL: [`src/main/resources/db/ddl.sql`](src/main/resources/db/ddl.sql)
 
 ## 실행 방법
 
-1. Oracle 21c XE에 계정을 만들고 [`ddl.sql`](src/main/resources/db/ddl.sql), [`data.sql`](src/main/resources/db/data.sql)을 실행합니다. 대시보드에 보일 예약이 필요하면 [`demo-resve.sql`](src/main/resources/db/demo-resve.sql)도 실행합니다 (실행일 기준 날짜로 생성).
+1. Oracle 21c XE에 계정을 만들고 [`ddl.sql`](src/main/resources/db/ddl.sql), [`data.sql`](src/main/resources/db/data.sql) 순서로 실행합니다. 초기화할 때는 [`drop.sql`](src/main/resources/db/drop.sql)을 먼저 실행합니다.
+   - `data.sql`은 [`gen_data.py`](src/main/resources/db/gen_data.py)가 만든 샘플 데이터입니다: 회원 31명, 시설 16곳, 공지 13건, 예약 1,661건(실행일 기준 지난 30일 ~ 앞으로 28일), 처리 이력 3,792건.
+   - 업무 규칙(시간 겹침 없음, 1인 1일 2시간, 운영시간·단위·정원, 신청·취소 시점, 상태와 이력 일치)을 지키도록 생성하고, 적재 후 SQL로 위반 0건을 확인했습니다.
 2. `src/main/resources/egovframework/props/db.properties.example`을 `db.properties`로 복사해 접속 정보를 넣습니다.
 3. `./mvnw package`로 만든 `target/egov-facility-reservation.war`를 Tomcat 9에 배포하거나, 전자정부 개발도구(Eclipse)에서 Maven 프로젝트로 가져와 Tomcat 9 서버로 실행합니다.
 
@@ -224,3 +226,4 @@ DDL: [`src/main/resources/db/ddl.sql`](src/main/resources/db/ddl.sql)
 | 관리자 | admin | Admin1234! |
 | 시민 | citizen1 | Citizen1234! |
 | 시민 | citizen2 | Citizen1234! |
+| 시민 | user03 ~ user30 | Citizen1234! |
