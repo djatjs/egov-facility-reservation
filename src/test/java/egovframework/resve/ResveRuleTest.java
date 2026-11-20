@@ -100,7 +100,25 @@ class ResveRuleTest extends ResveTestSupport {
 	}
 
 	@Test
-	@DisplayName("상태 전이: 신청→승인은 한 번만, 반려는 사유 필수, 처리된 예약은 다시 처리 불가, 이력이 남는다")
+	@DisplayName("대시보드·다가오는 예약: 신청은 승인 대기에, 승인은 처리 건수와 다가오는 예약에 반영")
+	void dashboardAndUpcoming() throws Exception {
+		long f = createFclty("대시보드");
+		String a = createMber("a");
+		int pendingBefore = resveService.selectDashboard().getPendingCnt();
+		int approveBefore = resveService.selectDashboard().getMonthApproveCnt();
+
+		long s1 = resveService.insertResve(req(f, a, "1000", "1100"));
+		assertEquals(pendingBefore + 1, resveService.selectDashboard().getPendingCnt());
+		assertEquals(true, resveService.selectPendingResveList(100).stream().anyMatch(r -> r.getResveSn() == s1));
+
+		resveService.approveResve(s1, login("admin", true));
+		assertEquals(pendingBefore, resveService.selectDashboard().getPendingCnt());
+		assertEquals(approveBefore + 1, resveService.selectDashboard().getMonthApproveCnt());
+		assertEquals(s1, resveService.selectUpcomingResveList(a).get(0).getResveSn());
+	}
+
+	@Test
+	@DisplayName("상태 전이:신청→승인은 한 번만, 반려는 사유 필수, 처리된 예약은 다시 처리 불가, 이력이 남는다")
 	void sttusTransition() throws Exception {
 		long f = createFclty("상태");
 		String a = createMber("a"), b = createMber("b");

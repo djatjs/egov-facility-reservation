@@ -54,6 +54,16 @@ public class AdminController {
 		return PagingSupport.prepare(searchVO, propertiesService.getInt("pageUnit"), propertiesService.getInt("pageSize"));
 	}
 
+	// ===== 대시보드 =====
+
+	@GetMapping("/admin/dashboard.do")
+	public String dashboard(Model model) throws Exception {
+		model.addAttribute("stat", resveService.selectDashboard());
+		model.addAttribute("pendingList", resveService.selectPendingResveList(5));
+		model.addAttribute("todayList", resveService.selectTodayResveList());
+		return "admin/dashboard";
+	}
+
 	// ===== 시설 =====
 
 	@GetMapping("/admin/fclty/list.do")

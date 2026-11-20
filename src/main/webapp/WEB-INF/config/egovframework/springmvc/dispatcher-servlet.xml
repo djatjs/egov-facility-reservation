@@ -44,11 +44,11 @@
 		p:prefix="/WEB-INF/jsp/egovframework/" p:suffix=".jsp" />
 
 	<!-- 표준프레임워크 페이징 태그 -->
-	<bean id="imageRenderer" class="egovframework.cmm.web.EgovImgPaginationRenderer" />
+	<bean id="textRenderer" class="egovframework.cmm.web.TextPaginationRenderer" />
 	<bean id="paginationManager" class="org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
 		<property name="rendererType">
 			<map>
-				<entry key="image" value-ref="imageRenderer" />
+				<entry key="text" value-ref="textRenderer" />
 			</map>
 		</property>
 	</bean>

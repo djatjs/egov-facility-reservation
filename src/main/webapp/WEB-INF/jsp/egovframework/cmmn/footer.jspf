@@ -1,4 +1,10 @@
+</div>
 </main>
-<footer class="foot"><div class="wrap">전자정부 표준프레임워크 기반 공공시설 예약 시스템 (포트폴리오용 데모)</div></footer>
+<footer class="foot">
+	<div class="wrap">
+		<p><strong>공공시설 예약 시스템</strong> · 포트폴리오용 데모</p>
+		<p>전자정부 표준프레임워크 4.3 기반 · 화면은 범정부 UI/UX 디자인 시스템(KRDS)을 참고했습니다.</p>
+	</div>
+</footer>
 </body>
 </html>

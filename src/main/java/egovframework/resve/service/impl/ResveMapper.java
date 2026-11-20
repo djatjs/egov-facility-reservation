@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
 import egovframework.fclty.service.FcltyVO;
+import egovframework.resve.service.DashboardVO;
 import egovframework.resve.service.ResveHistVO;
 import egovframework.resve.service.ResveSearchVO;
 import egovframework.resve.service.ResveVO;
@@ -41,4 +42,12 @@ public interface ResveMapper {
 	List<ResveVO> selectDayResveList(@Param("fcltySn") Long fcltySn, @Param("resveDe") String resveDe);
 
 	List<ResveHistVO> selectResveHistList(Long resveSn);
+
+	List<ResveVO> selectUpcomingResveList(@Param("mberId") String mberId, @Param("today") String today);
+
+	DashboardVO selectDashboard(String today);
+
+	List<ResveVO> selectPendingResveList(@Param("today") String today, @Param("count") int count);
+
+	List<ResveVO> selectTodayResveList(String today);
 }

@@ -21,6 +21,17 @@ public interface ResveService {
 	/** 시설 상세 화면의 시간표용: 해당 일자의 신청·승인 예약 (시간만 사용) */
 	List<ResveVO> selectDayResveList(Long fcltySn, String resveDe) throws Exception;
 
+	/** 오늘 이후 신청·승인 상태인 내 예약 (이용일 순, 최대 3건) */
+	List<ResveVO> selectUpcomingResveList(String mberId) throws Exception;
+
+	DashboardVO selectDashboard() throws Exception;
+
+	/** 승인 대기 중 먼저 신청한 순 */
+	List<ResveVO> selectPendingResveList(int count) throws Exception;
+
+	/** 오늘 이용 예정(승인) */
+	List<ResveVO> selectTodayResveList() throws Exception;
+
 	void cancelResve(Long resveSn, LoginVO login) throws Exception;
 
 	void approveResve(Long resveSn, LoginVO admin) throws Exception;

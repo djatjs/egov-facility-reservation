@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/fclty.css">
 </head>
 <body>
-<main class="wrap">
+<main class="wrap" style="padding-top:40px">
 	<h1>요청을 처리할 수 없습니다</h1>
-	<p class="msg error">페이지가 없거나 접근 권한이 없습니다. 문제가 계속되면 관리자에게 문의하세요.</p>
+	<p class="alert error">페이지가 없거나 접근 권한이 없습니다. 문제가 계속되면 관리자에게 문의하세요.</p>
 	<p><a class="btn" href="${pageContext.request.contextPath}/main.do">처음으로</a></p>
 </main>
 </body>

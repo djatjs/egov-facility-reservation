@@ -36,7 +36,7 @@ public class MberController {
 			HttpServletRequest request, Model model) throws Exception {
 		LoginVO login = mberService.login(mberId, password);
 		if (login == null) {
-			model.addAttribute("message", messageSource.getMessage("mber.login.fail", null, request.getLocale()));
+			model.addAttribute("errorMessage", messageSource.getMessage("mber.login.fail", null, request.getLocale()));
 			model.addAttribute("mberId", mberId);
 			return "mber/login";
 		}
@@ -46,7 +46,7 @@ public class MberController {
 			old.invalidate();
 		}
 		request.getSession(true).setAttribute(LoginVO.SESSION_KEY, login);
-		return login.isAdmin() ? "redirect:/admin/resve/list.do" : "redirect:/main.do";
+		return login.isAdmin() ? "redirect:/admin/dashboard.do" : "redirect:/main.do";
 	}
 
 	@PostMapping("/mber/logout.do")

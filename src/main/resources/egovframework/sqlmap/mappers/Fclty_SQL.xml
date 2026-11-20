@@ -21,6 +21,16 @@
 		</where>
 	</sql>
 
+	<select id="selectFcltyTyStatList" resultType="egovframework.fclty.service.FcltyTyStatVO">
+		SELECT C.CODE, C.CODE_NM, COUNT(F.FCLTY_SN) AS CNT
+		  FROM TB_CMMN_CODE C
+		  LEFT JOIN TB_FCLTY F ON F.FCLTY_TY_CD = C.CODE AND F.USE_YN = 'Y'
+		 WHERE C.CODE_ID = 'FCLTY_TY'
+		   AND C.USE_YN = 'Y'
+		 GROUP BY C.CODE, C.CODE_NM, C.SORT_ORDR
+		 ORDER BY C.SORT_ORDR
+	</select>
+
 	<select id="selectFcltyList" parameterType="egovframework.fclty.service.FcltySearchVO" resultType="egovframework.fclty.service.FcltyVO">
 		<include refid="egovframework.cmm.service.impl.CmmnCodeMapper.pagingPrefix" />
 		SELECT <include refid="columns" />

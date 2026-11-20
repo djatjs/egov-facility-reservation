@@ -4,6 +4,9 @@ import java.util.List;
 
 public interface FcltyService {
 
+	/** 유형별 운영 중인 시설 수 */
+	List<FcltyTyStatVO> selectFcltyTyStatList() throws Exception;
+
 	List<FcltyVO> selectFcltyList(FcltySearchVO searchVO) throws Exception;
 
 	int selectFcltyListTotCnt(FcltySearchVO searchVO) throws Exception;

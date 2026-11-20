@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import egovframework.cmm.LoginVO;
 import egovframework.cmm.TimeUtil;
 import egovframework.fclty.service.FcltyVO;
+import egovframework.resve.service.DashboardVO;
 import egovframework.resve.service.ResveHistVO;
 import egovframework.resve.service.ResveSearchVO;
 import egovframework.resve.service.ResveService;
@@ -129,6 +130,26 @@ public class ResveServiceImpl extends EgovAbstractServiceImpl implements ResveSe
 	@Override
 	public List<ResveVO> selectDayResveList(Long fcltySn, String resveDe) throws Exception {
 		return resveMapper.selectDayResveList(fcltySn, resveDe);
+	}
+
+	@Override
+	public List<ResveVO> selectUpcomingResveList(String mberId) throws Exception {
+		return resveMapper.selectUpcomingResveList(mberId, TimeUtil.toDe(LocalDate.now(ZONE)));
+	}
+
+	@Override
+	public DashboardVO selectDashboard() throws Exception {
+		return resveMapper.selectDashboard(TimeUtil.toDe(LocalDate.now(ZONE)));
+	}
+
+	@Override
+	public List<ResveVO> selectPendingResveList(int count) throws Exception {
+		return resveMapper.selectPendingResveList(TimeUtil.toDe(LocalDate.now(ZONE)), count);
+	}
+
+	@Override
+	public List<ResveVO> selectTodayResveList() throws Exception {
+		return resveMapper.selectTodayResveList(TimeUtil.toDe(LocalDate.now(ZONE)));
 	}
 
 	@Override

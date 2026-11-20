@@ -6,6 +6,7 @@
 - **개발 인원:** 1인
 - **기술:** Java 17 · 전자정부 표준프레임워크 4.3 (Spring MVC 5.3) · MyBatis · Oracle 21c XE · JSP/JSTL · Tomcat 9
 - **다룬 문제:** 동시 신청 경합(같은 시간대 중복, 1인 일일 한도 우회), 커넥션 풀 교착, 시큐어코딩 적용
+- **화면:** 범정부 UI/UX 디자인 시스템(KRDS) 참고, 웹 접근성 항목 점검
 
 ---
 
@@ -14,11 +15,13 @@
 | 구분 | 화면 | 내용 |
 | --- | --- | --- |
 | 시민 | 회원가입·로그인 | BCrypt 비밀번호, 로그인 시 세션 재발급 |
+| | 메인 | 유형별 시설 수, 다가오는 나의 예약, 공지 |
 | | 시설 찾기 | 유형·시설명 검색, 페이징 (표준프레임워크 `PaginationInfo`) |
-| | 시설 상세 | 날짜별 예약 가능 시간표, 예약 신청 |
+| | 시설 상세 | 날짜별 예약 가능 시간표, 시간표를 눌러 시간 선택(연속된 빈 칸만 범위 선택), 예약 신청 |
 | | 나의 예약 | 상태별 조회, 상세·처리 이력, 취소 (이용일 전날까지) |
 | | 공지사항 | 목록·상세 |
-| 관리자 | 예약 관리 | 시설·상태·기간·신청자 검색, 승인, 반려(사유 필수), 처리 이력 |
+| 관리자 | 대시보드 | 승인 대기, 오늘 이용 예정, 최근 7일 신청, 이번 달 반려율(이력 기준 집계), 먼저 처리할 신청 |
+| | 예약 관리 | 시설·상태·기간·신청자 검색, 승인, 반려(사유 필수), 처리 이력 |
 | | 시설 관리 | 등록·수정·사용 중지 (운영시간, 예약 단위 30·60·120분) |
 | | 공지 관리 | 등록·수정·삭제(논리 삭제) |
 
@@ -151,6 +154,34 @@ DDL: [`src/main/resources/db/ddl.sql`](src/main/resources/db/ddl.sql)
 
 ---
 
+## 4. 화면: KRDS 참고와 웹 접근성
+
+공공 누리집처럼 보이도록 **범정부 UI/UX 디자인 시스템(KRDS)** 표준형 스타일을 참고했습니다. KRDS 준수 인증이 아니라 참고 구현입니다.
+
+- 색상: KRDS 공식 저장소의 토큰 파일(`krds_tokens.css`) light 팔레트 값 사용 (primary-50 `#256EF4` 등)
+- 글꼴: Pretendard GOV, 본문 17px, 줄 간격 150%
+- 상태 배지: KRDS 시스템 색상 규칙(배경 5단계, 테두리 10단계, 글자 60단계)
+- 실제 정부 누리집으로 오인되지 않도록 공식 누리집 표시 배너와 정부 상징은 쓰지 않고, 상단에 "포트폴리오용 데모" 문구를 둠
+
+웹 접근성(KWCAG) 항목 중 이 화면에 해당하는 것을 점검했습니다.
+
+| 항목 | 적용 |
+| --- | --- |
+| 건너뛰기 링크 | 첫 Tab에 "본문 바로가기" |
+| 제목 | 페이지마다 `<title>`과 `<h1>` 1개, 현재 위치(breadcrumb) |
+| 레이블 | 모든 입력 요소에 `<label for>`, 형식 안내는 `aria-describedby` |
+| 표 | `<caption>`, `<th scope>` |
+| 현재 메뉴·페이지 | `aria-current="page"` |
+| 키보드 초점 | 모든 링크·버튼·입력에 보이는 초점 표시 |
+| 대체 텍스트 | 템플릿의 이미지 페이징 버튼(대체 텍스트 없음)을 텍스트 링크 + `aria-label`로 교체 (`TextPaginationRenderer`) |
+| 사용자 요구에 따른 실행 | 날짜를 바꿔도 바로 이동하지 않고 [조회]를 눌러야 바뀜 |
+| 상태 전달 | 시간표 칸은 `<button aria-pressed>`, 선택 결과는 `aria-live`로 읽힘, 오류는 `role="alert"` |
+| 명도 대비 | 본문 글자는 KRDS 대비 4.5:1 이상 단계(60 이상) 사용 |
+
+라벨 누락, 표 제목, 페이지당 `<h1>` 수는 주요 화면 10개를 스크립트로 검사했습니다. 스크린리더 실기 테스트는 하지 않았습니다.
+
+---
+
 ## 설계 선택과 이유
 
 | 결정 | 이유 | 고려한 대안 |
@@ -170,11 +201,11 @@ DDL: [`src/main/resources/db/ddl.sql`](src/main/resources/db/ddl.sql)
 | 테스트 | 수 | 내용 |
 | --- | --- | --- |
 | `ResveConcurrencyTest` | 4종 × 3회 | 경합①(같은 시간, 부분 겹침), 경합②(일일 한도), 서로 다른 시설은 막지 않음 |
-| `ResveRuleTest` | 7 | 겹침 경계(맞닿음 허용), 날짜 범위, 운영시간·단위·정원, 일일 한도, 본인 확인, 상태 전이와 이력 |
+| `ResveRuleTest` | 8 | 겹침 경계(맞닿음 허용), 날짜 범위, 운영시간·단위·정원, 일일 한도, 본인 확인, 상태 전이와 이력, 대시보드 집계 |
 | `SecurityInterceptorTest` | 4 | 비로그인 차단, 관리자 경로 403, CSRF 토큰 |
 
 ```bash
-./mvnw test                      # 23개
+./mvnw test                      # 24개
 ./mvnw test -Dtest=ResveRaceBench -Dsurefire.failIfNoSpecifiedTests=false   # 구현 비교 측정
 ```
 
@@ -182,7 +213,7 @@ DDL: [`src/main/resources/db/ddl.sql`](src/main/resources/db/ddl.sql)
 
 ## 실행 방법
 
-1. Oracle 21c XE에 계정을 만들고 [`ddl.sql`](src/main/resources/db/ddl.sql), [`data.sql`](src/main/resources/db/data.sql)을 실행합니다.
+1. Oracle 21c XE에 계정을 만들고 [`ddl.sql`](src/main/resources/db/ddl.sql), [`data.sql`](src/main/resources/db/data.sql)을 실행합니다. 대시보드에 보일 예약이 필요하면 [`demo-resve.sql`](src/main/resources/db/demo-resve.sql)도 실행합니다 (실행일 기준 날짜로 생성).
 2. `src/main/resources/egovframework/props/db.properties.example`을 `db.properties`로 복사해 접속 정보를 넣습니다.
 3. `./mvnw package`로 만든 `target/egov-facility-reservation.war`를 Tomcat 9에 배포하거나, 전자정부 개발도구(Eclipse)에서 Maven 프로젝트로 가져와 Tomcat 9 서버로 실행합니다.
 

@@ -126,4 +126,46 @@
 		 ORDER BY H.HIST_SN
 	</select>
 
+	<!-- ===== 메인·대시보드 ===== -->
+
+	<select id="selectUpcomingResveList" resultType="egovframework.resve.service.ResveVO">
+		SELECT * FROM (
+			SELECT <include refid="columns" />
+			<include refid="fromJoin" />
+			 WHERE R.MBER_ID = #{mberId}
+			   AND R.RESVE_DE &gt;= #{today}
+			   AND R.RESVE_STTUS_CD IN ('01', '02')
+			 ORDER BY R.RESVE_DE, R.BEGIN_TM
+		) WHERE ROWNUM &lt;= 3
+	</select>
+
+	<!-- 처리 건수는 현재 상태가 아니라 이력으로 센다 (승인 후 취소된 건도 승인 처리로 집계) -->
+	<select id="selectDashboard" parameterType="string" resultType="egovframework.resve.service.DashboardVO">
+		SELECT
+		    (SELECT COUNT(*) FROM TB_RESVE WHERE RESVE_STTUS_CD = '01' AND RESVE_DE &gt;= #{today}) AS PENDING_CNT,
+		    (SELECT COUNT(*) FROM TB_RESVE WHERE RESVE_STTUS_CD = '02' AND RESVE_DE = #{today}) AS TODAY_CNT,
+		    (SELECT COUNT(*) FROM TB_RESVE WHERE REGIST_DT &gt;= TRUNC(SYSDATE) - 6) AS WEEK_APPLY_CNT,
+		    (SELECT COUNT(*) FROM TB_RESVE_HIST WHERE AFT_STTUS_CD = '02' AND CHANGE_DT &gt;= TRUNC(SYSDATE, 'MM')) AS MONTH_APPROVE_CNT,
+		    (SELECT COUNT(*) FROM TB_RESVE_HIST WHERE AFT_STTUS_CD = '03' AND CHANGE_DT &gt;= TRUNC(SYSDATE, 'MM')) AS MONTH_RETURN_CNT
+		  FROM DUAL
+	</select>
+
+	<select id="selectPendingResveList" resultType="egovframework.resve.service.ResveVO">
+		SELECT * FROM (
+			SELECT <include refid="columns" />
+			<include refid="fromJoin" />
+			 WHERE R.RESVE_STTUS_CD = '01'
+			   AND R.RESVE_DE &gt;= #{today}
+			 ORDER BY R.REGIST_DT, R.RESVE_SN
+		) WHERE ROWNUM &lt;= #{count}
+	</select>
+
+	<select id="selectTodayResveList" parameterType="string" resultType="egovframework.resve.service.ResveVO">
+		SELECT <include refid="columns" />
+		<include refid="fromJoin" />
+		 WHERE R.RESVE_STTUS_CD = '02'
+		   AND R.RESVE_DE = #{today}
+		 ORDER BY R.BEGIN_TM, F.FCLTY_NM
+	</select>
+
 </mapper>

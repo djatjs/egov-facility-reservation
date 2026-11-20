@@ -5,10 +5,13 @@ import java.util.List;
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
 
 import egovframework.fclty.service.FcltySearchVO;
+import egovframework.fclty.service.FcltyTyStatVO;
 import egovframework.fclty.service.FcltyVO;
 
 @Mapper
 public interface FcltyMapper {
+
+	List<FcltyTyStatVO> selectFcltyTyStatList();
 
 	List<FcltyVO> selectFcltyList(FcltySearchVO searchVO);
 

@@ -11,6 +11,7 @@ import egovframework.cmm.TimeUtil;
 import egovframework.cmm.service.CmmnCodeService;
 import egovframework.fclty.service.FcltySearchVO;
 import egovframework.fclty.service.FcltyService;
+import egovframework.fclty.service.FcltyTyStatVO;
 import egovframework.fclty.service.FcltyVO;
 
 @Service("fcltyService")
@@ -21,6 +22,11 @@ public class FcltyServiceImpl extends EgovAbstractServiceImpl implements FcltySe
 
 	@Resource(name = "cmmnCodeService")
 	private CmmnCodeService cmmnCodeService;
+
+	@Override
+	public List<FcltyTyStatVO> selectFcltyTyStatList() throws Exception {
+		return fcltyMapper.selectFcltyTyStatList();
+	}
 
 	@Override
 	public List<FcltyVO> selectFcltyList(FcltySearchVO searchVO) throws Exception {
