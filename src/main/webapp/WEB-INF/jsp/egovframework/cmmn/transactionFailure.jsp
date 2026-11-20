@@ -1,3 +1,4 @@
+<%@ page pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/taglibs.jspf" %>
 <c:set var="pageTitle" value="요청을 처리하지 못했습니다" />
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/header.jspf" %>

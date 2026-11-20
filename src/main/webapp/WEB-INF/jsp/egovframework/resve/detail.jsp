@@ -1,3 +1,4 @@
+<%@ page pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/taglibs.jspf" %>
 <c:set var="pageTitle" value="예약 상세" />
 <c:set var="menu" value="my" />

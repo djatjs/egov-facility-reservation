@@ -1,3 +1,4 @@
+<%@ page pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/taglibs.jspf" %>
 <c:set var="pageTitle" value="${empty fclty.fcltySn ? '시설 등록' : '시설 수정'}" />
 <c:set var="menu" value="adminFclty" />

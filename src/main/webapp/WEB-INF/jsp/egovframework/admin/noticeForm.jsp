@@ -1,3 +1,4 @@
+<%@ page pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/taglibs.jspf" %>
 <c:set var="pageTitle" value="${empty notice.nttSn ? '공지사항 등록' : '공지사항 수정'}" />
 <c:set var="menu" value="notice" />
