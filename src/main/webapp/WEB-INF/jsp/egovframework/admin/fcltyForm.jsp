@@ -21,12 +21,12 @@
 		</div>
 		<div class="field">
 			<label for="fcltyNm">시설명</label>
-			<input type="text" id="fcltyNm" name="fcltyNm" value="<c:out value='${fclty.fcltyNm}'/>" maxlength="100" required>
+			<input type="text" id="fcltyNm" name="fcltyNm" value="<c:out value='${fclty.fcltyNm}'/>" maxlength="33" required>
 		</div>
 	</div>
 	<div class="field">
 		<label for="adres">주소</label>
-		<input type="text" id="adres" name="adres" value="<c:out value='${fclty.adres}'/>" maxlength="200" required>
+		<input type="text" id="adres" name="adres" value="<c:out value='${fclty.adres}'/>" maxlength="66" required>
 	</div>
 	<div class="grid">
 		<div class="field">
@@ -51,7 +51,7 @@
 	<p class="hint" id="tmHint">시간은 24시간제 4자리로 입력합니다 (예: 0900, 2200). 운영시간은 예약 단위로 나누어떨어져야 합니다.</p>
 	<div class="field">
 		<label for="fcltyDc">설명</label>
-		<textarea id="fcltyDc" name="fcltyDc" rows="4" maxlength="2000"><c:out value="${fclty.fcltyDc}" /></textarea>
+		<textarea id="fcltyDc" name="fcltyDc" rows="4" maxlength="666"><c:out value="${fclty.fcltyDc}" /></textarea>
 	</div>
 	<c:choose>
 		<c:when test="${empty fclty.fcltySn}"><input type="hidden" name="useYn" value="Y"></c:when>

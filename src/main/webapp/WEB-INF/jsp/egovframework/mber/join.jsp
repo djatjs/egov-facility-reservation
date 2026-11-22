@@ -17,7 +17,7 @@
 	</div>
 	<div class="field">
 		<label for="mberNm">이름</label>
-		<input type="text" id="mberNm" name="mberNm" maxlength="50" required autocomplete="name">
+		<input type="text" id="mberNm" name="mberNm" maxlength="16" required autocomplete="name">
 	</div>
 	<button type="submit" class="btn primary block">가입하기</button>
 </form>

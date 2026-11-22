@@ -44,7 +44,7 @@ public class MberServiceImpl extends EgovAbstractServiceImpl implements MberServ
 		if (vo.getPassword() == null || vo.getPassword().length() < 8 || vo.getPassword().length() > 64) {
 			throw processException("mber.invalid.password");
 		}
-		if (vo.getMberNm() == null || vo.getMberNm().trim().isEmpty() || vo.getMberNm().length() > 50) {
+		if (vo.getMberNm() == null || vo.getMberNm().trim().isEmpty() || vo.getMberNm().length() > 16) {
 			throw processException("mber.invalid.name");
 		}
 		if (mberMapper.countMber(vo.getMberId()) > 0) {

@@ -67,9 +67,9 @@ public class FcltyServiceImpl extends EgovAbstractServiceImpl implements FcltySe
 	}
 
 	private void validate(FcltyVO vo) throws Exception {
-		if (isBlank(vo.getFcltyNm(), 100) || isBlank(vo.getAdres(), 200)
+		if (isBlank(vo.getFcltyNm(), 33) || isBlank(vo.getAdres(), 66)
 				|| vo.getAcmdNmpr() == null || vo.getAcmdNmpr() < 1 || vo.getAcmdNmpr() > 10000
-				|| (vo.getFcltyDc() != null && vo.getFcltyDc().length() > 2000)) {
+				|| (vo.getFcltyDc() != null && vo.getFcltyDc().length() > 666)) {
 			throw processException("fclty.invalid.input");
 		}
 		boolean knownType = cmmnCodeService.selectCodeList(CmmnCodeService.FCLTY_TY).stream()
