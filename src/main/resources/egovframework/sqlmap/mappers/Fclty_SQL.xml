@@ -68,4 +68,45 @@
 		 WHERE FCLTY_SN = #{fcltySn}
 	</update>
 
+	<!-- ===== SR-03 휴관일 ===== -->
+
+	<select id="lockFclty" parameterType="long" resultType="long">
+		SELECT FCLTY_SN FROM TB_FCLTY WHERE FCLTY_SN = #{fcltySn} FOR UPDATE
+	</select>
+
+	<select id="countActiveResveOn" resultType="int">
+		SELECT COUNT(*)
+		  FROM TB_RESVE
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND RESVE_DE = #{closeDe}
+		   AND RESVE_STTUS_CD IN ('01', '02')
+	</select>
+
+	<select id="selectCloseOn" resultType="egovframework.fclty.service.FcltyCloseVO">
+		SELECT CLOSE_SN, FCLTY_SN, CLOSE_DE, CLOSE_RSN, REGISTER_ID, REGIST_DT
+		  FROM TB_FCLTY_CLOSE
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND CLOSE_DE = #{closeDe}
+	</select>
+
+	<select id="selectUpcomingCloseList" resultType="egovframework.fclty.service.FcltyCloseVO">
+		SELECT CLOSE_SN, FCLTY_SN, CLOSE_DE, CLOSE_RSN, REGISTER_ID, REGIST_DT
+		  FROM TB_FCLTY_CLOSE
+		 WHERE FCLTY_SN = #{fcltySn}
+		   AND CLOSE_DE &gt;= #{today}
+		 ORDER BY CLOSE_DE
+	</select>
+
+	<insert id="insertClose" parameterType="egovframework.fclty.service.FcltyCloseVO">
+		<selectKey keyProperty="closeSn" resultType="long" order="BEFORE">SELECT SEQ_FCLTY_CLOSE.NEXTVAL FROM DUAL</selectKey>
+		INSERT INTO TB_FCLTY_CLOSE (CLOSE_SN, FCLTY_SN, CLOSE_DE, CLOSE_RSN, REGISTER_ID, REGIST_DT)
+		VALUES (#{closeSn}, #{fcltySn}, #{closeDe}, #{closeRsn}, #{registerId}, SYSDATE)
+	</insert>
+
+	<delete id="deleteClose">
+		DELETE FROM TB_FCLTY_CLOSE
+		 WHERE CLOSE_SN = #{closeSn}
+		   AND CLOSE_DE &gt; #{today}
+	</delete>
+
 </mapper>

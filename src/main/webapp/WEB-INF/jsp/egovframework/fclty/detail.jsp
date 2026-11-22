@@ -26,13 +26,16 @@
 	<span class="hint">내일(${minDe})부터 ${maxDe}까지 신청할 수 있습니다.</span>
 </form>
 
+<c:if test="${not empty closeInfo}">
+	<p class="alert error" role="status">${resveDeIso}은 휴관일입니다. 사유: <c:out value="${closeInfo.closeRsn}" /></p>
+</c:if>
 <p class="legend" aria-hidden="true"><span>신청 가능</span><span class="l-taken">예약됨</span><span class="l-sel">선택한 시간</span></p>
 <ul class="slots" id="slots" aria-label="${resveDeIso} 시간대별 예약 현황. 신청할 시간을 차례로 선택하세요">
 	<c:forEach var="s" items="${slots}">
 		<c:set var="label" value="${fn:substring(s.beginTm,0,2)}:${fn:substring(s.beginTm,2,4)}~${fn:substring(s.endTm,0,2)}:${fn:substring(s.endTm,2,4)}" />
 		<li>
 			<button type="button" class="slot" data-begin="${s.beginTm}" data-end="${s.endTm}" aria-pressed="false" ${s.taken ? 'disabled' : ''}>
-				${label}<span class="st">${s.taken ? '예약됨' : '가능'}</span>
+				${label}<span class="st">${s.taken ? (empty closeInfo ? '예약됨' : '휴관') : '가능'}</span>
 			</button>
 		</li>
 	</c:forEach>
@@ -40,6 +43,9 @@
 
 <h2 id="applyTitle">예약 신청</h2>
 <c:choose>
+	<c:when test="${not empty closeInfo}">
+		<p class="hint">휴관일에는 예약할 수 없습니다. 다른 날짜를 조회하세요.</p>
+	</c:when>
 	<c:when test="${empty login}">
 		<div class="alert">로그인한 회원만 신청할 수 있습니다. <a href="${ctx}/mber/loginView.do">로그인하기</a></div>
 	</c:when>

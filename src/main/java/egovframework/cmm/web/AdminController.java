@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import egovframework.cmm.LoginVO;
 import egovframework.cmm.service.CmmnCodeService;
+import egovframework.fclty.service.FcltyCloseVO;
 import egovframework.fclty.service.FcltySearchVO;
 import egovframework.fclty.service.FcltyService;
 import egovframework.fclty.service.FcltyVO;
@@ -90,6 +91,9 @@ public class AdminController {
 		}
 		model.addAttribute("fclty", fclty);
 		model.addAttribute("fcltyTyList", cmmnCodeService.selectCodeList(CmmnCodeService.FCLTY_TY));
+		if (fcltySn != null) {
+			model.addAttribute("closeList", fcltyService.selectUpcomingCloseList(fcltySn)); // SR-03
+		}
 		return "admin/fcltyForm";
 	}
 
@@ -105,6 +109,27 @@ public class AdminController {
 		}
 		redirect.addFlashAttribute("message", "시설 정보를 저장했습니다.");
 		return "redirect:/admin/fclty/list.do";
+	}
+
+	@PostMapping("/admin/fclty/close/insert.do")
+	public String closeInsert(@RequestParam Long fcltySn, @RequestParam(required = false) String closeDe,
+			@RequestParam(required = false) String closeRsn, @SessionAttribute(LoginVO.SESSION_KEY) LoginVO login,
+			RedirectAttributes redirect) throws Exception {
+		FcltyCloseVO vo = new FcltyCloseVO();
+		vo.setFcltySn(fcltySn);
+		vo.setCloseDe(closeDe == null ? null : closeDe.replace("-", ""));
+		vo.setCloseRsn(closeRsn);
+		vo.setRegisterId(login.getMberId());
+		fcltyService.insertClose(vo);
+		redirect.addFlashAttribute("message", "휴관일을 등록했습니다.");
+		return "redirect:/admin/fclty/form.do?fcltySn=" + fcltySn;
+	}
+
+	@PostMapping("/admin/fclty/close/delete.do")
+	public String closeDelete(@RequestParam Long fcltySn, @RequestParam Long closeSn, RedirectAttributes redirect) throws Exception {
+		fcltyService.deleteClose(closeSn);
+		redirect.addFlashAttribute("message", "휴관일을 삭제했습니다.");
+		return "redirect:/admin/fclty/form.do?fcltySn=" + fcltySn;
 	}
 
 	// ===== 예약 =====

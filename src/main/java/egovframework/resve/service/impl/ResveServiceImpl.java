@@ -68,6 +68,11 @@ public class ResveServiceImpl extends EgovAbstractServiceImpl implements ResveSe
 			throw processException("fclty.not.available");
 		}
 
+		// SR-03: 휴관일 등록도 같은 시설 잠금을 잡으므로, 여기서 본 결과가 커밋 전까지 바뀌지 않는다
+		if (resveMapper.countClose(vo.getFcltySn(), vo.getResveDe()) > 0) {
+			throw processException("resve.closed");
+		}
+
 		int operBegin = TimeUtil.toMinutes(fclty.getOperBeginTm());
 		int operEnd = TimeUtil.toMinutes(fclty.getOperEndTm());
 		int unit = fclty.getResveUnitMin();

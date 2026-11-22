@@ -56,6 +56,7 @@ public abstract class ResveTestSupport {
 				+ "OR FCLTY_SN IN (SELECT FCLTY_SN FROM TB_FCLTY WHERE REGISTER_ID = '" + TEST_REGISTER + "')";
 		jdbc.update("DELETE FROM TB_RESVE_HIST WHERE RESVE_SN IN (" + testResve + ")");
 		jdbc.update("DELETE FROM TB_RESVE WHERE RESVE_SN IN (" + testResve + ")");
+		jdbc.update("DELETE FROM TB_FCLTY_CLOSE WHERE FCLTY_SN IN (SELECT FCLTY_SN FROM TB_FCLTY WHERE REGISTER_ID = ?)", TEST_REGISTER);
 		jdbc.update("DELETE FROM TB_FCLTY WHERE REGISTER_ID = ?", TEST_REGISTER);
 		jdbc.update("DELETE FROM TB_MBER WHERE MBER_ID LIKE 'zt\\_%' ESCAPE '\\'");
 	}

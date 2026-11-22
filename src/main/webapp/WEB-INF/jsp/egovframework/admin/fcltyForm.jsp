@@ -70,4 +70,46 @@
 		<a class="btn" href="${ctx}/admin/fclty/list.do">목록</a>
 	</div>
 </form>
+
+<c:if test="${not empty fclty.fcltySn}">
+	<h2 id="closeTitle">휴관일</h2>
+	<p class="hint">휴관일에는 시민이 예약할 수 없습니다. 그날 신청·승인된 예약이 있으면 먼저 반려하거나 취소해야 등록됩니다.</p>
+	<form method="post" action="${ctx}/admin/fclty/close/insert.do" class="search" aria-labelledby="closeTitle">
+		<input type="hidden" name="_csrf" value="<c:out value='${sessionScope.CSRF_TOKEN}'/>">
+		<input type="hidden" name="fcltySn" value="${fclty.fcltySn}">
+		<div class="field">
+			<label for="closeDe">휴관일</label>
+			<input type="date" id="closeDe" name="closeDe" required>
+		</div>
+		<div class="field">
+			<label for="closeRsn">사유 <span class="hint">(100자 이내)</span></label>
+			<input type="text" id="closeRsn" name="closeRsn" maxlength="100" required>
+		</div>
+		<button type="submit" class="btn primary">휴관일 등록</button>
+	</form>
+	<div class="table-wrap">
+		<table class="list">
+			<caption class="sr-only">예정된 휴관일: 날짜, 사유, 등록자, 삭제</caption>
+			<thead><tr><th scope="col">날짜</th><th scope="col">사유</th><th scope="col">등록자</th><th scope="col">삭제</th></tr></thead>
+			<tbody>
+			<c:forEach var="cl" items="${closeList}">
+				<tr>
+					<td>${fn:substring(cl.closeDe,0,4)}-${fn:substring(cl.closeDe,4,6)}-${fn:substring(cl.closeDe,6,8)}</td>
+					<td class="left"><c:out value="${cl.closeRsn}" /></td>
+					<td><c:out value="${cl.registerId}" /></td>
+					<td>
+						<form method="post" action="${ctx}/admin/fclty/close/delete.do" class="inline" onsubmit="return confirm('휴관일을 삭제할까요?');">
+							<input type="hidden" name="_csrf" value="<c:out value='${sessionScope.CSRF_TOKEN}'/>">
+							<input type="hidden" name="fcltySn" value="${fclty.fcltySn}">
+							<input type="hidden" name="closeSn" value="${cl.closeSn}">
+							<button type="submit" class="btn small danger">삭제</button>
+						</form>
+					</td>
+				</tr>
+			</c:forEach>
+			<c:if test="${empty closeList}"><tr><td colspan="4" class="empty">예정된 휴관일이 없습니다.</td></tr></c:if>
+			</tbody>
+		</table>
+	</div>
+</c:if>
 <%@ include file="/WEB-INF/jsp/egovframework/cmmn/footer.jspf" %>

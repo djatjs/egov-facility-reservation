@@ -27,6 +27,10 @@
 		   AND #{endTm} &gt; BEGIN_TM
 	</select>
 
+	<select id="countClose" resultType="int">
+		SELECT COUNT(*) FROM TB_FCLTY_CLOSE WHERE FCLTY_SN = #{fcltySn} AND CLOSE_DE = #{resveDe}
+	</select>
+
 	<select id="selectMberDailyMinutes" resultType="int">
 		SELECT NVL(SUM( (TO_NUMBER(SUBSTR(END_TM, 1, 2)) * 60 + TO_NUMBER(SUBSTR(END_TM, 3, 2)))
 		              - (TO_NUMBER(SUBSTR(BEGIN_TM, 1, 2)) * 60 + TO_NUMBER(SUBSTR(BEGIN_TM, 3, 2))) ), 0)

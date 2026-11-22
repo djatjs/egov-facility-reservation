@@ -22,6 +22,8 @@ public interface ResveMapper {
 
 	int countOverlap(ResveVO vo);
 
+	int countClose(@Param("fcltySn") Long fcltySn, @Param("resveDe") String resveDe);
+
 	int selectMberDailyMinutes(@Param("mberId") String mberId, @Param("resveDe") String resveDe);
 
 	void insertResve(ResveVO vo);

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import egovframework.cmm.TimeUtil;
 import egovframework.cmm.service.CmmnCodeService;
 import egovframework.cmm.web.PagingSupport;
+import egovframework.fclty.service.FcltyCloseVO;
 import egovframework.fclty.service.FcltySearchVO;
 import egovframework.fclty.service.FcltyService;
 import egovframework.fclty.service.FcltyVO;
@@ -70,6 +71,7 @@ public class FcltyController {
 		}
 		String de = TimeUtil.toDe(day);
 
+		FcltyCloseVO closeInfo = fcltyService.selectCloseOn(fcltySn, de); // SR-03: 휴관일이면 모든 칸을 막는다
 		List<ResveVO> booked = resveService.selectDayResveList(fcltySn, de);
 		int open = TimeUtil.toMinutes(fclty.getOperBeginTm());
 		int close = TimeUtil.toMinutes(fclty.getOperEndTm());
@@ -78,7 +80,7 @@ public class FcltyController {
 		List<Map<String, Object>> slots = new ArrayList<>();
 		for (int t = open; t < close; t += unit) {
 			int begin = t, end = t + unit;
-			boolean taken = booked.stream().anyMatch(r -> TimeUtil.toMinutes(r.getBeginTm()) < end && TimeUtil.toMinutes(r.getEndTm()) > begin);
+			boolean taken = closeInfo != null || booked.stream().anyMatch(r -> TimeUtil.toMinutes(r.getBeginTm()) < end && TimeUtil.toMinutes(r.getEndTm()) > begin);
 			Map<String, Object> slot = new LinkedHashMap<>();
 			slot.put("beginTm", TimeUtil.toHhmi(begin));
 			slot.put("endTm", TimeUtil.toHhmi(end));
@@ -92,6 +94,7 @@ public class FcltyController {
 		model.addAttribute("minDe", min.toString());
 		model.addAttribute("maxDe", max.toString());
 		model.addAttribute("slots", slots);
+		model.addAttribute("closeInfo", closeInfo);
 		model.addAttribute("dailyLimitMin", propertiesService.getInt("resveDailyLimitMin"));
 		return "fclty/detail";
 	}
