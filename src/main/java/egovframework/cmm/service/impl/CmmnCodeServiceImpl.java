@@ -19,4 +19,21 @@ public class CmmnCodeServiceImpl extends EgovAbstractServiceImpl implements Cmmn
 	public List<CmmnCodeVO> selectCodeList(String codeId) throws Exception {
 		return cmmnCodeMapper.selectCodeList(codeId);
 	}
+
+	@Override
+	public void updateFcltyTyNm(String code, String codeNm) throws Exception {
+		String name = codeNm == null ? "" : codeNm.trim();
+		if (name.isEmpty() || name.length() > FCLTY_TY_NM_MAX) {
+			throw processException("cmmn.code.invalid.name", new String[] { String.valueOf(FCLTY_TY_NM_MAX) });
+		}
+		if (code == null || code.isEmpty()) {
+			throw processException("info.nodata.msg");
+		}
+		if (cmmnCodeMapper.countSameCodeNm(FCLTY_TY, code, name) > 0) {
+			throw processException("cmmn.code.duplicate.name");
+		}
+		if (cmmnCodeMapper.updateCodeNm(FCLTY_TY, code, name) != 1) {
+			throw processException("info.nodata.msg");
+		}
+	}
 }

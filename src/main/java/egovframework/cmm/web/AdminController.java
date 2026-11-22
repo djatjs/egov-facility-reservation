@@ -150,6 +150,23 @@ public class AdminController {
 		return "redirect:/admin/resve/detail.do?resveSn=" + resveSn;
 	}
 
+	// ===== 시설 유형 (SR-01) =====
+
+	@GetMapping("/admin/fcltyTy/list.do")
+	public String fcltyTyList(Model model) throws Exception {
+		model.addAttribute("fcltyTyList", cmmnCodeService.selectCodeList(CmmnCodeService.FCLTY_TY));
+		model.addAttribute("nameMax", CmmnCodeService.FCLTY_TY_NM_MAX);
+		return "admin/fcltyTyList";
+	}
+
+	@PostMapping("/admin/fcltyTy/save.do")
+	public String fcltyTySave(@RequestParam String code, @RequestParam(required = false) String codeNm,
+			RedirectAttributes redirect) throws Exception {
+		cmmnCodeService.updateFcltyTyNm(code, codeNm);
+		redirect.addFlashAttribute("message", "시설 유형 이름을 저장했습니다.");
+		return "redirect:/admin/fcltyTy/list.do";
+	}
+
 	// ===== 공지 =====
 
 	@GetMapping("/admin/notice/form.do")

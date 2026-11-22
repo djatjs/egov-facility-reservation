@@ -10,6 +10,22 @@
 		 ORDER BY SORT_ORDR
 	</select>
 
+	<!-- SR-01: 코드(CODE)는 시설 등에서 참조하므로 바꾸지 않고 표시 이름만 바꾼다 -->
+	<update id="updateCodeNm">
+		UPDATE TB_CMMN_CODE
+		   SET CODE_NM = #{codeNm}
+		 WHERE CODE_ID = #{codeId}
+		   AND CODE = #{code}
+	</update>
+
+	<select id="countSameCodeNm" resultType="int">
+		SELECT COUNT(*)
+		  FROM TB_CMMN_CODE
+		 WHERE CODE_ID = #{codeId}
+		   AND CODE &lt;&gt; #{code}
+		   AND CODE_NM = #{codeNm}
+	</select>
+
 	<!-- Oracle 11g 호환 ROWNUM 페이징 (다른 매퍼에서 include) -->
 	<sql id="pagingPrefix">
 		SELECT * FROM ( SELECT ROWNUM RN, P.* FROM (

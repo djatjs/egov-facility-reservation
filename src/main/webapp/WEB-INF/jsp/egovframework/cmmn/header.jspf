@@ -49,6 +49,7 @@
 				<a href="${ctx}/admin/dashboard.do" ${menu eq 'adminDash' ? 'aria-current="page"' : ''}>대시보드</a>
 				<a href="${ctx}/admin/resve/list.do" ${menu eq 'adminResve' ? 'aria-current="page"' : ''}>예약 관리</a>
 				<a href="${ctx}/admin/fclty/list.do" ${menu eq 'adminFclty' ? 'aria-current="page"' : ''}>시설 관리</a>
+				<a href="${ctx}/admin/fcltyTy/list.do" ${menu eq 'adminFcltyTy' ? 'aria-current="page"' : ''}>시설 유형</a>
 			</c:if>
 		</nav>
 	</div>
